@@ -2,40 +2,48 @@
 setlocal enabledelayedexpansion
 
 :: ===== CONFIG =====
-set BASE_PATH=C:\Users\%USERNAME%\Projects
+set "BASE_PATH=C:\Users\%USERNAME%\Projects"
 
 :: ===== INPUT =====
-set /p proj="Enter Project Name: "
+set /p "proj=Enter Project Name: "
+
+:: Trim trailing spaces (simple)
+for /f "tokens=* delims= " %%A in ("%proj%") do set "proj=%%A"
 
 :: ===== CREATE FOLDER =====
-set PROJECT_FOLDER=%BASE_PATH%\%proj%
-mkdir "%PROJECT_FOLDER%"
+set "PROJECT_FOLDER=%BASE_PATH%\%proj%"
+if not exist "%PROJECT_FOLDER%" (
+    mkdir "%PROJECT_FOLDER%" 2>nul
+)
 
-echo Creating project folder: "%PROJECT_FOLDER%"
-echo.
+:: Target file
+set "FILE=%PROJECT_FOLDER%\CHECKLIST.md"
 
-:: ===== CREATE CHECKLIST WITH CHECKBOXES =====
-(
-echo # %proj% - Workflow Checklist
-echo.
-echo ## Steps
-echo - [ ] Send BU Notification
-echo - [ ] Send GSOC Notification
-echo - [ ] Change status in ServiceNow (SNOW)
-echo - [ ] Work on the task
-echo - [ ] Send End Notification
-echo - [ ] Send Report
-echo - [ ] Send Flaw Data
-echo - [ ] Change status in ServiceNow (SNOW) - Final Update
-echo.
-echo ## Status Tracking
-echo - Start Date: %DATE% %TIME%
-echo - End Date:
-echo.
-echo ## Notes
-echo (Add comments here)
-) > "%PROJECT_FOLDER%\CHECKLIST.md"
+:: Write file line by line (overwrite if exists)
+> "%FILE%" echo # %proj% - Workflow Checklist
+>> "%FILE%" echo.
+>> "%FILE%" echo ## Steps
+>> "%FILE%" echo - [ ] Send BU Notification
+>> "%FILE%" echo - [ ] Send GSOC Notification
+>> "%FILE%" echo - [ ] Change status in ServiceNow (SNOW)
+>> "%FILE%" echo - [ ] Work on the task
+>> "%FILE%" echo - [ ] Send End Notification
+>> "%FILE%" echo - [ ] Send Report
+>> "%FILE%" echo - [ ] Send Flaw Data
+>> "%FILE%" echo - [ ] Change status in ServiceNow (SNOW) - Final Update
+>> "%FILE%" echo.
+>> "%FILE%" echo ## Status Tracking
+>> "%FILE%" echo - Start Date: %DATE% %TIME%
+>> "%FILE%" echo - End Date:
+>> "%FILE%" echo.
+>> "%FILE%" echo ## Notes
+>> "%FILE%" echo (Add comments here)
 
-echo Checklist with checkboxes created at: "%PROJECT_FOLDER%\CHECKLIST.md"
+echo.
+if exist "%FILE%" (
+    echo ✅ Checklist created at "%FILE%"
+) else (
+    echo ❌ Failed to create "%FILE%". Check folder permissions.
+)
 echo.
 pause
