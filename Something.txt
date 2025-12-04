@@ -1,0 +1,41 @@
+@echo off
+setlocal enabledelayedexpansion
+
+:: ===== CONFIG =====
+set BASE_PATH=C:\Users\%USERNAME%\Projects
+
+:: ===== INPUT =====
+set /p proj="Enter Project Name: "
+
+:: ===== CREATE FOLDER =====
+set PROJECT_FOLDER=%BASE_PATH%\%proj%
+mkdir "%PROJECT_FOLDER%"
+
+echo Creating project folder: "%PROJECT_FOLDER%"
+echo.
+
+:: ===== CREATE CHECKLIST WITH CHECKBOXES =====
+(
+echo # %proj% - Workflow Checklist
+echo.
+echo ## Steps
+echo - [ ] Send BU Notification
+echo - [ ] Send GSOC Notification
+echo - [ ] Change status in ServiceNow (SNOW)
+echo - [ ] Work on the task
+echo - [ ] Send End Notification
+echo - [ ] Send Report
+echo - [ ] Send Flaw Data
+echo - [ ] Change status in ServiceNow (SNOW) - Final Update
+echo.
+echo ## Status Tracking
+echo - Start Date: %DATE% %TIME%
+echo - End Date:
+echo.
+echo ## Notes
+echo (Add comments here)
+) > "%PROJECT_FOLDER%\CHECKLIST.md"
+
+echo Checklist with checkboxes created at: "%PROJECT_FOLDER%\CHECKLIST.md"
+echo.
+pause
