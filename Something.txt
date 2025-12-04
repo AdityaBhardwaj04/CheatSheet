@@ -1,49 +1,37 @@
-@echo off
-setlocal enabledelayedexpansion
+# create_project.py
+import os
+from datetime import datetime
 
-:: ===== CONFIG =====
-set "BASE_PATH=C:\Users\%USERNAME%\Projects"
+base = os.path.expanduser(r"~\Projects")  # change if needed
+proj = input("Enter Project Name: ").strip()
+if not proj:
+    print("No name entered.")
+    raise SystemExit
 
-:: ===== INPUT =====
-set /p "proj=Enter Project Name: "
+project_folder = os.path.join(base, proj)
+os.makedirs(project_folder, exist_ok=True)
 
-:: Trim trailing spaces (simple)
-for /f "tokens=* delims= " %%A in ("%proj%") do set "proj=%%A"
+checklist_path = os.path.join(project_folder, "CHECKLIST.md")
+content = f"""# {proj} - Workflow Checklist
 
-:: ===== CREATE FOLDER =====
-set "PROJECT_FOLDER=%BASE_PATH%\%proj%"
-if not exist "%PROJECT_FOLDER%" (
-    mkdir "%PROJECT_FOLDER%" 2>nul
-)
+## Steps
+- [ ] Send BU Notification
+- [ ] Send GSOC Notification
+- [ ] Change status in ServiceNow (SNOW)
+- [ ] Work on the task
+- [ ] Send End Notification
+- [ ] Send Report
+- [ ] Send Flaw Data
+- [ ] Change status in ServiceNow (SNOW) - Final Update
 
-:: Target file
-set "FILE=%PROJECT_FOLDER%\CHECKLIST.md"
+## Status Tracking
+- Start Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+- End Date:
 
-:: Write file line by line (overwrite if exists)
-> "%FILE%" echo # %proj% - Workflow Checklist
->> "%FILE%" echo.
->> "%FILE%" echo ## Steps
->> "%FILE%" echo - [ ] Send BU Notification
->> "%FILE%" echo - [ ] Send GSOC Notification
->> "%FILE%" echo - [ ] Change status in ServiceNow (SNOW)
->> "%FILE%" echo - [ ] Work on the task
->> "%FILE%" echo - [ ] Send End Notification
->> "%FILE%" echo - [ ] Send Report
->> "%FILE%" echo - [ ] Send Flaw Data
->> "%FILE%" echo - [ ] Change status in ServiceNow (SNOW) - Final Update
->> "%FILE%" echo.
->> "%FILE%" echo ## Status Tracking
->> "%FILE%" echo - Start Date: %DATE% %TIME%
->> "%FILE%" echo - End Date:
->> "%FILE%" echo.
->> "%FILE%" echo ## Notes
->> "%FILE%" echo (Add comments here)
+## Notes
+(Add comments here)
+"""
+with open(checklist_path, "w", encoding="utf-8") as f:
+    f.write(content)
 
-echo.
-if exist "%FILE%" (
-    echo ✅ Checklist created at "%FILE%"
-) else (
-    echo ❌ Failed to create "%FILE%". Check folder permissions.
-)
-echo.
-pause
+print("Checklist created at:", checklist_path)
